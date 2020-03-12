@@ -4,7 +4,7 @@ provider "aws" {
 
 locals {
   zones = ["us-west-2a", "us-west-2b", "us-west-2c"]
-  domain_name = "cloudservices2go.com"
+  domain_name = "james-o"
   s3_kops_state = "k8.${local.domain_name}"
   k8_cluster_name = "blog.${local.domain_name}"
   ingress_ips = ["14.0.0.80/32" , "14.0.0.81/32"]
