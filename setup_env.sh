@@ -4,7 +4,10 @@
 
 # Install Jq
 
-yay -S jq && yay -S unzip
+sudo apt-get --yes update \
+&& sudo apt-get --yes install jq \
+&& sudo apt-get --yes install unzip || log "ERROR: Failed update" $?
+
 KOPS_FLAVOR="kops-linux-amd64"
 KOPS_VERSION=$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)
 KOPS_URL="https://github.com/kubernetes/kops/releases/download/${KOPS_VERSION}/${KOPS_FLAVOR}"
@@ -42,7 +45,7 @@ kops_setup(){
 
     if [ -d '/usr/local/bin' ]; then
 
-         sudo mv kops-linux-amd64 /usr/local/bin/kops
+        sudo mv kops-linux-amd64 /usr/local/bin/kops
     else
         log "ERROR: /usr/local/bin Directory Not found"
     fi
@@ -55,8 +58,25 @@ kops_setup(){
 }
 
 kubectl_setup(){
-    
-    log "INFO: Start Kops Download  -> Version : ${KOPS_VERSION} and Flavor: ${KOPS_FLAVOR}"
+
+    log "INFO: Start Kubectl Download"
+    curl -sLO ${KUBECTL_URL} || log  "ERROR: Downlaod failed" $?
+    log "INFO: Download Complete"
+
+    #give executable permision
+
+    chmod +x kubectl || log "ERROR: Cant set the executable permission" $?
+
+    if [ -d '/usr/local/bin' ]; then
+
+        sudo mv kubectl /usr/local/bin/kubectl || log "ERROR: Moving Kubectl Failed" $?
+    else
+
+        log "ERROR: /usr/local/bin Directory Not found"
+    fi
+
+    log "INFO: Kubectl setup done ->  Version : ${KUBECTL_VERSION}"
+
 }
 
 
@@ -73,7 +93,7 @@ terraform_setup(){
 
     if [ -d '/usr/local/bin' ]; then
 
-         sudo mv terraform /usr/local/bin/terraform || log "ERROR: Moving Terraform Failed"  $?
+        sudo mv terraform /usr/local/bin/terraform || log "ERROR: Moving Terraform Failed"  $?
 
     else
 
